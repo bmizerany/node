@@ -116,6 +116,7 @@ global.clearInterval = global.clearTimeout;
 
 var stdout;
 process.__defineGetter__('stdout', function () {
+  debug("asdf")
   if (stdout) return stdout;
 
   var binding = process.binding('stdio'),
@@ -124,8 +125,10 @@ process.__defineGetter__('stdout', function () {
       fd = binding.stdoutFD;
 
   if (binding.isStdoutBlocking()) {
+    debug("blocking!")
     stdout = new fs.WriteStream(null, {fd: fd});
   } else {
+    debug("non-blocking!")
     stdout = new net.Stream(fd);
     // FIXME Should probably have an option in net.Stream to create a stream from
     // an existing fd which is writable only. But for now we'll just add
