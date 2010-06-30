@@ -1,9 +1,12 @@
 var path = require("path")
 var sys = require("sys")
 var fs = require("fs")
+var amath = require("./../lib/amath")
 var childProcess = require("child_process")
 
 function Bench(script) {
+
+  this.runs = []
 
   function exec (script, cb) {
     var start = new Date()
@@ -18,32 +21,32 @@ function Bench(script) {
     })
   }
 
-  this.banner = function () {
-    console.log("~ " + path.basename(script, '.js'))
-  }
-
   this.run = function (times, cb) {
+    var that = this
+
     if (times <= 0) {
-      cb()
+      cb([
+        Math.min.apply(Math, that.runs),
+        Math.max.apply(Math, that.runs),
+        amath.avg(that.runs).toPrecision(3),
+        amath.stdev(that.runs).toPrecision(3)
+      ])
       return
     }
-
-    var that = this
 
     exec(script, function (elapsed, code) {
       if (code != 0) {
         console.log("ERROR")
       }
 
-      console.log(elapsed)
-
+      that.runs.push(elapsed)
       that.run(times - 1, cb)
     })
   }
 
 }
 
-function run (benchmarks) {
+Bench.all = function (benchmarks) {
   if (benchmarks.length == 0) {
     return
   }
@@ -57,8 +60,10 @@ function run (benchmarks) {
   console.log(path.basename(filepath, '.js'))
   console.log("-------------------")
 
-  bench.run(times, function () {
-    run(benchmarks)
+  bench.run(times, function (stats) {
+    var args = ["min:%d max:%d avg:%d std:%d"].concat(stats)
+    console.log.apply(console, args)
+    Bench.all(benchmarks)
   })
 }
 
@@ -73,4 +78,4 @@ var benchmarks = dirContents.filter(function (filename) {
   return filename.match(filter)
 })
 
-run(benchmarks)
+Bench.all(benchmarks)
