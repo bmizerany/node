@@ -63,10 +63,14 @@ function run (benchmarks) {
 }
 
 var times = parseInt(process.env.TIMES || 5)
+var pattern = process.env.PATTERN
 var benchmarkDir = path.dirname(__filename)
 var dirContents = require("fs").readdirSync(benchmarkDir)
+
+var filter = ( pattern ?  new RegExp(pattern) : /^bench_.*\.js$/ )
+
 var benchmarks = dirContents.filter(function (filename) {
-  return filename.match(/^bench_.*\.js$/)
+  return filename.match(filter)
 })
 
 run(benchmarks)
