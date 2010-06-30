@@ -1,4 +1,4 @@
-/*global require process exports console __filename*/
+/*global require process exports console __filename module __dirname*/
 
 var path = require("path");
 var sys = require("sys");
