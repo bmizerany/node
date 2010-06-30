@@ -76,7 +76,8 @@ Allocates a new buffer using an `array` of octets.
 
 Allocates a new buffer containing the given `str`.
 
-### buffer.write(string, encoding, offset)
+### buffer.write(string, encoding='utf8', offset=0)
+### buffer.write(string, offset=0, encoding='utf8')
 
 Writes `string` to the buffer at `offset` using the given encoding. Returns
 number of octets written.  If `buffer` did not contain enough space to fit
